@@ -9,13 +9,17 @@ def salvar_dados(values):
     conn, cur = conectar()
 
     try:
-        cur.execute("INSERT INTO desligamentos(nome,cpf,cidade,bairro,endereço, celular) VALUES (?,?,?,?,?,?)",
+        cur.execute("INSERT INTO desligamentos(nome,cpf,cidade,bairro,endereco, celular, data_entrada,alta) VALUES (?,?,?,?,?,?,?,?)",
                     (values['-NOME-'],
                      values['-CPF-'],
                      values['-CIDADE-'],
                      values['-BAIRRO-'],
                      values['-ENDERECO-'],
-                     values['-CELULAR-']))
+                     values['-CELULAR-'],
+                     values['-DATA-'],
+                     values['-TIPO-']
+                     
+                     ))
         conn.commit()
         sg.popup("Dados salvos com sucesso!")
     except Exception as e:
@@ -44,7 +48,15 @@ layout=[
     [sg.Text("Celular")],
     [sg.Input(size=(15,2), key='-CELULAR-')],
 
-    [sg.Button("Salvar",key='-SALVAR-'), sg.Button()]]
+    [sg.Text('Data de entrada')],
+    [sg.Input(key='-DATA-')],
+
+    [sg.Text("Modalidade")],
+    [sg.Input(key='-TIPO-')],
+    [sg.Button("Salvar",key='-SALVAR-')]
+
+
+    ]
     
 
 window =sg.Window("Pacientes", layout)

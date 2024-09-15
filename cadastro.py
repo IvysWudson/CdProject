@@ -10,6 +10,8 @@ def conectar():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nome TEXT NOT NULL UNIQUE,
                 data_entrada TEXT NOT NULL,
+                cidade TEXT NOT NULL,
+                bairro TEXT NOT NULL,
                 alta TEXT NOT NULL,
                 cpf TEXT NOT NULL,
                 endereco TEXT NOT NULL,
@@ -79,24 +81,24 @@ def pesquisa():
     desconectar(conn)
 
 
+if __name__ == '__main__':
+    while True:
+        print("""
+                BEM VINDO     
+            [1]-CADASTRAR PACIENTE
+            [2]-PESQUISAR PACIENTE
+            [3]-SAIR""")
+        op = input("Digite a opção desejada: ")
 
-while True:
-    print("""
-              BEM VINDO     
-          [1]-CADASTRAR PACIENTE
-          [2]-PESQUISAR PACIENTE
-          [3]-SAIR""")
-    op = input("Digite a opção desejada: ")
-
-    if op == '1':
-        salvar()
-    elif op == '2':
-        pesquisa()
-    elif op =='3':
-        print("Saindo...")
-        break
-    else:
-        print("Comando invalido!")
+        if op == '1':
+            salvar()
+        elif op == '2':
+            pesquisa()
+        elif op =='3':
+            print("Saindo...")
+            break
+        else:
+            print("Comando invalido!")
 
     
 
