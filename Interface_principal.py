@@ -2,14 +2,15 @@ import PySimpleGUI as sg
 from interface_cadastro import *
 import sqlite3
 
-def pesquisar():
-    conn, cur = sqlite3.connect()
+def pesquisar(values):
+    conn = sqlite3.connect('desligamentos.db')
+    cur = conn.cursor()
 
     resultados = []
     
     if values['-PESQUISAR NOME-']:
         nome = values['-PESQUISAR NOME-'].upper()
-        cur.execute("SELECT * FROM desligamentos WHERE nome LIKE ?",("%" + nome+"%"))
+        cur.execute("SELECT * FROM desligamentos WHERE nome LIKE ?",("%" + nome +"%"))
         resultados = cur.fetchall()
     elif values['-PESQUISAR CPF-']:
         cpf = values ['-PESQUISAR_CPF-'].upper()
@@ -46,13 +47,6 @@ def exibir_resultados(resultados):
         print("Nenhum resultado encontrado.")
 
     
-
-
-
-
-
-
-
 def main():
     # Layout da janela principal
     layout1 = [
@@ -88,20 +82,25 @@ def main():
                     else:
                         sg.popup("Por favor, preencha todos os campos corretamente.")
 
-                if event2 == '-PESQUISAR-':
-                    window2.hide()
-                    window3 = janela_pesquisa()
+        if event == '-PESQUISAR-':
+            window.hide()
+            window3 = janela_pesquisa()
 
-                    while True:
-                        event3, values3 = window3.read()
-                        
-                        if event3 == sg.WINDOW_CLOSED or event3 == '-VOLTAR-':
-                            window3.hide()
-                            window.un_hide()
-                            break
-                        if event3 == '-PESQUISAR-':
-                            resultados = pesquisar(values3)
-                            exibir_resultados(resultados)
+            while True:
+                try:
+                    event3, values3 = window3.read()
+                    
+                    if event3 == sg.WINDOW_CLOSED or event3 == '-VOLTAR-':
+                        window3.hide()
+                        window.un_hide()
+                        break
+                    if event3 == '-PESQUISAR-':
+                        resultados = pesquisar(values3)
+                        exibir_resultados(resultados)
+                except Exception as e:
+                    print(f"Erro: linha 101 {e}")
+                    break
+
 
 
     window.close()
