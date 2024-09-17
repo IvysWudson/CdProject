@@ -8,13 +8,13 @@ def pesquisar(values):
 
     resultados = []
     
-    if values['-PESQUISAR NOME-']:
-        nome = values['-PESQUISAR NOME-'].upper()
-        cur.execute("SELECT * FROM desligamentos WHERE nome LIKE ?",("%" + nome +"%"))
+    if values['-PESQUISAR_NOME-']:
+        nome = values['-PESQUISAR_NOME-'].upper()
+        cur.execute("SELECT * FROM desligamentos WHERE nome LIKE ?",("%" + nome +"%",))
         resultados = cur.fetchall()
-    elif values['-PESQUISAR CPF-']:
+    elif values['-PESQUISAR_CPF-']:
         cpf = values ['-PESQUISAR_CPF-'].upper()
-        cur.execute("SELECT * FROM delsigamentos WHERE nome LIKE ?",("%"+cpf+"%"))
+        cur.execute("SELECT * FROM desligamentos WHERE cpf LIKE ?",("%"+cpf+"%",))
         resultados = cur.fetchall()
 
 
@@ -26,9 +26,9 @@ def janela_pesquisa():
     layout_pesquisa = [
         [sg.Text("Pesquisar por Nome:")],
         [sg.Input(key='-PESQUISAR_NOME-', size=(30,1))],
-        [sg.Text("Ou Pesquisar por CPF:")],
+        [sg.Text("Pesquisar por CPF:")],
         [sg.Input(key='-PESQUISAR_CPF-', size=(30,1))],
-        [sg.Button("Pesquisar", key='-PESQUISAR-'), sg.Button("Voltar", key='-VOLTAR-')],
+        [sg.Button("Pesquisar", key='-PESQUISAR_2-'), sg.Button("Voltar", key='-VOLTAR-')],
         [sg.Output(size=(60, 10))]  # Para exibir os resultados
     ]
     return sg.Window("Pesquisar Pacientes", layout_pesquisa)
@@ -91,10 +91,10 @@ def main():
                     event3, values3 = window3.read()
                     
                     if event3 == sg.WINDOW_CLOSED or event3 == '-VOLTAR-':
-                        window3.hide()
+                        window3.close()
                         window.un_hide()
                         break
-                    if event3 == '-PESQUISAR-':
+                    if event3 == '-PESQUISAR_2-':
                         resultados = pesquisar(values3)
                         exibir_resultados(resultados)
                 except Exception as e:
