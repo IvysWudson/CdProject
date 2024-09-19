@@ -75,7 +75,7 @@ if __name__ == '__main__':
             break
 
         if event == '-SALVAR-':
-            if values['-NOME-'] and values['-CPF-'] and values['-CIDADE-'] and values['-BAIRRO-'] and values['-BAIRRO-'] and values['-ENDERECO-'] and values['-CELULAR-']:
+            if values['-NOME-'] and values['-CPF-'] and values['-CIDADE-'] and values['-BAIRRO-'] and values['-TIPO-'] and values['-ENDERECO-'] and values['-CELULAR-']:
                 salvar_dados(values)
         else:
             sg.popup("Erro de sintaxe")

@@ -2,6 +2,9 @@ import PySimpleGUI as sg
 from interface_cadastro import *
 import sqlite3
 
+def deletar():
+    breakpoint
+
 def pesquisar(values):
     conn = sqlite3.connect('desligamentos.db')
     cur = conn.cursor()
@@ -31,7 +34,7 @@ def janela_pesquisa():
         [sg.Button("Pesquisar", key='-PESQUISAR_2-'), sg.Button("Voltar", key='-VOLTAR-')],
         [sg.Output(size=(60, 10))]  # Para exibir os resultados
     ]
-    return sg.Window("Pesquisar Pacientes", layout_pesquisa)
+    return sg.Window("Pesquisar Pacientes", layout_pesquisa, resizable=True)
 
 def exibir_resultados(resultados):
     if resultados:
@@ -52,6 +55,7 @@ def main():
     layout1 = [
         [sg.Button("Cadastrar", key='-CADASTRAR-')],
         [sg.Button("Pesquisar", key='-PESQUISAR-')],
+        [sg.Button("Editar/Remover")],
         [sg.Button("Sair", key='-SAIR-')]
     ]
 
