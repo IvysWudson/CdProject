@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-from hashlib import sha256
+import hashlib
 import sqlite3
 from PySimpleGUI import theme
 theme("DarkGreen3")
@@ -21,20 +21,21 @@ def desconecta_login(conn_login):
         except Exception as e:
             print(f"Erro: desconecta_login {e}")
 
-def salvar_cad():
+def salvar_cad(usuario, senha):
     conn_cad, cur_cad = conectar_login()
 
-    usuario = input("Digite seu usuario")
-    senha = input("Digite sua senha")
-    senha2 = input("Digite novamente sua senha")
-    if senha == senha2:
-        senha_hash = sha256(senha.encode('utf-8'))
-        senha_hash = senha_hash.hexdigest()
+    senha_hash = hashlib.sha256(senha.encode('utf-8')).hexdigest()
 
-        cur_cad.execute("INSERT INTO usuarios(usuario, senha) VALUES ?, ?", (usuario, senha_hash))
+    try:
+        cur_cad.execute("INSERT INTO login (usuario, senha) VALUES (?, ?)", (usuario, senha_hash))
         conn_cad.commit()
-        print("Usuario cadastrado!")
-        
+        sg.popup("Usuário cadastrado com sucesso!")
+    except sqlite3.IntegrityError:
+        sg.popup("Erro: O usuário já existe!")
+    except Exception as e:
+        sg.popup(f"Erro ao cadastrar: {e}")
+    
+    desconecta_login(conn_cad)
 
 
 
@@ -44,17 +45,62 @@ def salvar_cad():
 
 login_layout = [
     [sg.Text("USUARIO"),sg.Input(key='-LOGIN-', size=(13,2))],
-    [sg.Text("SENHA   "),sg.Input(key='-SENHA-', size=(13,2), password_char='*')]
+    [sg.Text("SENHA   "),sg.Input(key='-SENHA-', size=(13,2), password_char='*')],
+    [sg.Button("Cadastrar novo usuario", key='-CADASTRAR_USER-')]
     
 ]
 
 cad_layout = [
-    [sg.Text("USUARIO"),sg.Input(key='-LOGIN-', size=(13,2))],
-    [sg.Text("SENHA   "),sg.Input(key='-SENHA-', size=(13,2), password_char='*')]
+    [sg.Text("USUARIO"),sg.Input(key='-LOGIN_CAD-', size=(13,2))],
+    [sg.Text("SENHA   "),sg.Input(key='-SENHA_CAD-', size=(13,2), password_char='*')],
+    [sg.Button("SALVAR", key='-SALVAR-'),sg.Button("VOLTAR",key="-VOLTAR-")]
 ]
 
 
 
-cad_window = sg.Window("LOGIN", login_layout)
-cad_window.read()
-cad_window.close()
+log_window = sg.Window("LOGIN", login_layout)
+while True:
+    event, value = log_window.read()
+    try:
+        if event == '-CADASTRAR_USER-':
+            log_window.hide()
+            cad_window = sg.Window("Cadastro", cad_layout)
+            while True:
+                events2, values2 = cad_window.read()
+                try:
+                    if events2 == sg.WINDOW_CLOSED or events2 == '-VOLTAR-':
+                        cad_window.close()
+                        log_window.un_hide()
+                        break
+                    if events2 == '-SALVAR-':
+                        if values2['-LOGIN_CAD-'] and values2['-SENHA_CAD-']:
+                            conn = sqlite3.connect("senhas_user.db")
+                            cur = conn.cursor()
+                            senha_sem = values2['-LOGIN_CAD-']
+                            senha_com = hashlib.sha256(senha_sem.encode()).hexdigest()
+                            cur.execute('''CREATE TABLE IF NOT EXISTS senhas(id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        user TEXT NOT NULL, 
+                                        senha2 TEXT NOT NULL)''')
+                            cur.execute("INSERT INTO senhas(user, senha2) VALUES (?,?)", (values2['-LOGIN_CAD-'], 
+                                                                                          senha_com ))
+                            print("Dados salvos com sucesso!!")
+                            conn.commit()
+                            conn.close()
+
+                            
+                            
+                except Exception as e:
+                    print(f"Erro linha 74 {e}")
+                        
+        if event == sg.WINDOW_CLOSED:
+                break
+        
+    except Exception as e:
+        print(f"Erro: linha 67 {e}")
+    
+
+
+
+
+
+
